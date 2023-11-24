@@ -1,0 +1,126 @@
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+
+public class numberGuessing 
+{
+
+    private static int remainingGuesses = 10;
+    private static int targetNumber = (int) (Math.random() * 100 + 1);
+
+    private static JTextField inputField;
+    private static JTextArea outputArea;
+
+    public static void checkNumber() 
+    {
+        try 
+        {
+            int guessedNumber = Integer.parseInt(inputField.getText());
+
+            if (guessedNumber == targetNumber) 
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations! You have guessed the number");
+                int option = JOptionPane.showConfirmDialog(null, "Do you want to play again?", null,
+                        JOptionPane.YES_NO_OPTION);
+                inputField.setEditable(false);
+                if (option == JOptionPane.YES_OPTION) 
+                {
+                    resetGame();
+                } 
+                else 
+                {
+                    System.exit(0);
+                }
+            } 
+            else if (guessedNumber < targetNumber) 
+            {
+                outputArea.append("The number is greater than " + guessedNumber + "\n");
+                outputArea.append("Guesses left: " + (--remainingGuesses) + "\n");
+            } 
+            else if (guessedNumber > targetNumber) 
+            {
+                outputArea.append("The number is lesser than " + guessedNumber + "\n");
+                outputArea.append("Guesses left: " + (--remainingGuesses) + "\n");
+            }
+
+            inputField.setText("");
+
+            if (remainingGuesses == 0) 
+            {
+                JOptionPane.showMessageDialog(null, "Game Over!\nThe number was " + targetNumber, null,
+                        JOptionPane.INFORMATION_MESSAGE);
+                int option = JOptionPane.showConfirmDialog(null, "Do you want to play again?", "Game",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (option == JOptionPane.YES_OPTION) 
+                {
+                    resetGame();
+                }
+                else 
+                {
+                    System.exit(0);
+                }
+            }
+        } catch (NumberFormatException e) {
+            outputArea.append("Enter a valid number\n");
+        }
+    }
+
+    private static void resetGame() 
+    {
+        remainingGuesses = 10;
+        targetNumber = (int) (Math.random() * 100 + 1);
+        inputField.setEditable(true);
+        outputArea.setText("Guesses left: 10\n");
+    }
+
+    public static void main(String[] args) 
+    {
+        JFrame frame = new JFrame("Number Guessing Game");
+
+        Toolkit kit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = kit.getScreenSize();
+        int screenHeight = screenSize.height;
+        int screenWidth = screenSize.width;
+
+        frame.getContentPane().setBackground(new Color(210, 240, 240));
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+
+        frame.setLayout(new FlowLayout());
+        frame.setSize(screenWidth / 3, screenHeight / 2);
+        frame.setLocation(300, 250);
+
+        JLabel guessLabel = new JLabel("Enter the number between 1 to 100");
+        guessLabel.setBackground(new Color(200, 200, 200));
+
+        inputField = new JTextField(4);
+        inputField.setBackground(new Color(255, 255, 255));
+
+        JButton guessButton = new JButton("Guess!");
+        guessButton.setBackground(new Color(192, 192, 192));
+
+        outputArea = new JTextArea(20, 50);
+        outputArea.setFont(new Font("SansSerif", Font.BOLD, 12));
+
+        frame.add(guessLabel);
+        frame.add(inputField);
+        frame.add(guessButton);
+        frame.add(outputArea);
+        outputArea.setEditable(false);
+        outputArea.append("Guesses left: 10\n");
+
+        guessButton.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                checkNumber();
+            }
+        });
+
+        frame.setVisible(true);
+    }
+}
